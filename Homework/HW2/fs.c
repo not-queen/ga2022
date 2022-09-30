@@ -1,5 +1,5 @@
 #include "fs.h"
-
+#include <stdlib.h>
 #include "event.h"
 #include "heap.h"
 #include "queue.h"
@@ -37,6 +37,47 @@ typedef struct fs_work_t
 } fs_work_t;
 
 static int file_thread_func(void* user);
+
+bool fs_work_is_done(fs_work_t* work)
+{
+	return work ? event_is_raised(work->done) : true;
+}
+
+void fs_work_wait(fs_work_t* work)
+{
+	if (work)
+	{
+		event_wait(work->done);
+	}
+}
+
+int fs_work_get_result(fs_work_t* work)
+{
+	fs_work_wait(work);
+	return work ? work->result : -1;
+}
+
+void* fs_work_get_buffer(fs_work_t* work)
+{
+	fs_work_wait(work);
+	return work ? work->buffer : NULL;
+}
+
+size_t fs_work_get_size(fs_work_t* work)
+{
+	fs_work_wait(work);
+	return work ? work->size : 0;
+}
+
+void fs_work_destroy(fs_work_t* work)
+{
+	if (work)
+	{
+		event_wait(work->done);
+		event_destroy(work->done);
+		heap_free(work->heap, work);
+	}
+}
 
 fs_t* fs_create(heap_t* heap, int queue_capacity)
 {
@@ -87,54 +128,25 @@ fs_work_t* fs_write(fs_t* fs, const char* path, const void* buffer, size_t size,
 	if (use_compression)
 	{
 		// HOMEWORK 2: Queue file write work on compression queue!
+
+		// tmp will store the compressed data
+		char* tmp = heap_alloc(work->heap, 65535, 8);
+
+		// call compress funtion from LZ4 to compress the data
+		int compress_size = LZ4_compress_default(work->buffer, tmp, work->size, 65535);
+
+		// check whether we comepress the data or not
+		if (!compress_size) {
+			printf("compress failed\n");
+			abort();
+		}
+
+		// assign buffer to the compressed data
+		work->buffer = tmp;
 	}
-	else
-	{
-		queue_push(fs->file_queue, work);
-	}
+	queue_push(fs->file_queue, work);
 
 	return work;
-}
-
-bool fs_work_is_done(fs_work_t* work)
-{
-	return work ? event_is_raised(work->done) : true;
-}
-
-void fs_work_wait(fs_work_t* work)
-{
-	if (work)
-	{
-		event_wait(work->done);
-	}
-}
-
-int fs_work_get_result(fs_work_t* work)
-{
-	fs_work_wait(work);
-	return work ? work->result : -1;
-}
-
-void* fs_work_get_buffer(fs_work_t* work)
-{
-	fs_work_wait(work);
-	return work ? work->buffer : NULL;
-}
-
-size_t fs_work_get_size(fs_work_t* work)
-{
-	fs_work_wait(work);
-	return work ? work->size : 0;
-}
-
-void fs_work_destroy(fs_work_t* work)
-{
-	if (work)
-	{
-		event_wait(work->done);
-		event_destroy(work->done);
-		heap_free(work->heap, work);
-	}
 }
 
 static void file_read(fs_work_t* work)
@@ -182,11 +194,25 @@ static void file_read(fs_work_t* work)
 	if (work->use_compression)
 	{
 		// HOMEWORK 2: Queue file read work on decompression queue!
+
+		// tmp will store the decompressed data
+		char* tmp = heap_alloc(work->heap, 65535, 8);
+
+		// call decompress function from LZ4 to decompress the data
+		int decompress_size = LZ4_decompress_safe(work->buffer, tmp, work->size, 65535);
+
+		// check whether we get data or not
+		if (!decompress_size) {
+			printf("decompress failed\n");
+			abort();
+		}
+
+		// assign buffer to the decompressed data
+		work->buffer = tmp;
 	}
-	else
-	{
-		event_signal(work->done);
-	}
+
+	event_signal(work->done);
+
 }
 
 static void file_write(fs_work_t* work)
@@ -220,6 +246,9 @@ static void file_write(fs_work_t* work)
 
 	event_signal(work->done);
 }
+
+
+
 
 static int file_thread_func(void* user)
 {

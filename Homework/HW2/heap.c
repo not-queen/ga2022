@@ -2,7 +2,7 @@
 
 #include "debug.h"
 #include "mutex.h"
-#include "tlsf/tlsf.h"
+#include "tlsf.h"
 
 #include <stddef.h>
 #include <stdio.h>

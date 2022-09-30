@@ -140,38 +140,41 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\atomic.c" />
-    <ClCompile Include="..\..\src\debug.c" />
     <ClCompile Include="..\..\src\event.c" />
-    <ClCompile Include="..\..\src\heap.c" />
-    <ClCompile Include="..\..\src\lz4\lz4.c" />
-    <ClCompile Include="..\..\src\lz4\lz4file.c" />
-    <ClCompile Include="..\..\src\lz4\lz4frame.c" />
-    <ClCompile Include="..\..\src\lz4\lz4hc.c" />
-    <ClCompile Include="..\..\src\lz4\xxhash.c" />
     <ClCompile Include="..\..\src\mutex.c" />
     <ClCompile Include="..\..\src\queue.c" />
     <ClCompile Include="..\..\src\semaphore.c" />
     <ClCompile Include="..\..\src\thread.c" />
     <ClCompile Include="..\..\src\wm.c" />
+    <ClCompile Include="debug.c" />
     <ClCompile Include="fs.c" />
+    <ClCompile Include="heap.c" />
     <ClCompile Include="hw2-main.c" />
+    <ClCompile Include="lz4.c" />
+    <ClCompile Include="lz4file.c" />
+    <ClCompile Include="lz4frame.c" />
+    <ClCompile Include="lz4hc.c" />
+    <ClCompile Include="tlsf.c" />
+    <ClCompile Include="xxhash.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\atomic.h" />
     <ClInclude Include="..\..\src\debug.h" />
     <ClInclude Include="..\..\src\event.h" />
-    <ClInclude Include="..\..\src\heap.h" />
-    <ClInclude Include="..\..\src\lz4\lz4.h" />
-    <ClInclude Include="..\..\src\lz4\lz4file.h" />
-    <ClInclude Include="..\..\src\lz4\lz4frame.h" />
-    <ClInclude Include="..\..\src\lz4\lz4frame_static.h" />
-    <ClInclude Include="..\..\src\lz4\lz4hc.h" />
     <ClInclude Include="..\..\src\mutex.h" />
     <ClInclude Include="..\..\src\queue.h" />
     <ClInclude Include="..\..\src\semaphore.h" />
     <ClInclude Include="..\..\src\thread.h" />
     <ClInclude Include="..\..\src\wm.h" />
     <ClInclude Include="fs.h" />
+    <ClInclude Include="heap.h" />
+    <ClInclude Include="lz4.h" />
+    <ClInclude Include="lz4file.h" />
+    <ClInclude Include="lz4frame.h" />
+    <ClInclude Include="lz4frame_static.h" />
+    <ClInclude Include="lz4hc.h" />
+    <ClInclude Include="tlsf.h" />
+    <ClInclude Include="xxhash.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
