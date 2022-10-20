@@ -16,7 +16,7 @@ void trace_destroy(trace_t* trace);
 void trace_duration_push(trace_t* trace, const char* name);
 
 // End tracing the currently active duration on the current thread.
-void trace_duration_pop(trace_t* trace);
+void trace_duration_pop(trace_t* trace, const char* name);
 
 // Start recording trace events.
 // A Chrome trace file will be written to path.

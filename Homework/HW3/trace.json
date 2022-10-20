@@ -1,0 +1,12 @@
+{
+	"displayTimeUnit": "ns", "traceEvents": [
+		{ "name":"homework3_slow_function", "ph" : "B", "pid" : 16300, "tid" : "16580", "ts" : "3084697481" },
+		{ "name":"homework3_slow_function", "ph" : "B", "pid" : 16300, "tid" : "21496", "ts" : "3084697487" },
+		{ "name":"homework3_slower_function", "ph" : "B", "pid" : 16300, "tid" : "16580", "ts" : "3084698578" },
+		{ "name":"homework3_slower_function", "ph" : "B", "pid" : 16300, "tid" : "21496", "ts" : "3084698579" },
+		{ "name":"homework3_slower_function", "ph" : "E", "pid" : 16300, "tid" : "16580", "ts" : "3084700729" },
+		{ "name":"homework3_slow_function", "ph" : "E", "pid" : 16300, "tid" : "16580", "ts" : "3084700729" },
+		{ "name":"homework3_slower_function", "ph" : "E", "pid" : 16300, "tid" : "21496", "ts" : "3084700730" },
+		{ "name":"homework3_slow_function", "ph" : "E", "pid" : 16300, "tid" : "21496", "ts" : "3084700731" },
+	
+}
