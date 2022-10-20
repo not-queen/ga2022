@@ -1,4 +1,11 @@
+#include "atomic.h"
+#include "debug.h"
+#include "fs.h"
+#include "heap.h"
+#include "mutex.h"
 #include "thread.h"
+#include "timer.h"
+#include "timer_object.h"
 #include "trace.h"
 
 
