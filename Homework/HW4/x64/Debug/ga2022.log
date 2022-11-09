@@ -1,0 +1,31 @@
+﻿  Performing Custom Build Tools
+  Performing Custom Build Tools
+  atomic.c
+  debug.c
+  ecs.c
+  event.c
+  fs.c
+  gpu.c
+  heap.c
+  lecture7.c
+  lz4.c
+  main.c
+  mat4f.c
+  mutex.c
+  quatf.c
+  queue.c
+  render.c
+  semaphore.c
+  simple_game.c
+  thread.c
+  timeofday.c
+  timer.c
+  正在生成代码...
+  正在编译...
+  timer_object.c
+  tlsf.c
+  trace.c
+  transform.c
+  wm.c
+  正在生成代码...
+  ga2022.vcxproj -> C:\Users\not_queen\Desktop\ga2022\Homework\HW4\x64\Debug\ga2022.exe
