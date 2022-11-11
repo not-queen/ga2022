@@ -77,6 +77,7 @@ static void spawn_camera(frogger_game_t* game);
 static void update_players(frogger_game_t* game);
 static void draw_models(frogger_game_t* game);
 static void spawn_traffic(frogger_game_t* game, int index);
+static void update_traffic(frogger_game_t* game);
 
 frogger_game_t* frogger_game_create(heap_t* heap, fs_t* fs, wm_window_t* window, render_t* render)
 {
@@ -101,6 +102,8 @@ frogger_game_t* frogger_game_create(heap_t* heap, fs_t* fs, wm_window_t* window,
 	spawn_traffic(game, 0);
 	spawn_traffic(game, 1);
 	spawn_traffic(game, 2);
+	spawn_traffic(game, 3);
+	spawn_traffic(game, 4);
 	spawn_camera(game);
 	
 
@@ -151,14 +154,14 @@ static void load_resources(frogger_game_t* game)
 
 	static vec3f_t traffic_verts[] =
 	{
-		{ -1.0f, -5.0f,  1.0f }, { 0.0f, 1.0f,  1.0f },
-		{  1.0f, -5.0f,  1.0f }, { 1.0f, 0.0f,  1.0f },
-		{  1.0f,  5.0f,  1.0f }, { 1.0f, 1.0f,  0.0f },
-		{ -1.0f,  5.0f,  1.0f }, { 1.0f, 0.0f,  0.0f },
-		{ -1.0f, -5.0f, -1.0f }, { 0.0f, 1.0f,  0.0f },
-		{  1.0f, -5.0f, -1.0f }, { 0.0f, 0.0f,  1.0f },
-		{  1.0f,  5.0f, -1.0f }, { 1.0f, 1.0f,  1.0f },
-		{ -1.0f,  5.0f, -1.0f }, { 0.0f, 0.0f,  0.0f },
+		{ -1.0f, -1.5f,  1.0f }, { 0.0f, 1.0f,  1.0f },
+		{  1.0f, -1.5f,  1.0f }, { 1.0f, 0.0f,  1.0f },
+		{  1.0f,  1.5f,  1.0f }, { 1.0f, 1.0f,  0.0f },
+		{ -1.0f,  1.5f,  1.0f }, { 1.0f, 0.0f,  0.0f },
+		{ -1.0f, -1.5f, -1.0f }, { 0.0f, 1.0f,  0.0f },
+		{  1.0f, -1.5f, -1.0f }, { 0.0f, 0.0f,  1.0f },
+		{  1.0f,  1.5f, -1.0f }, { 1.0f, 1.0f,  1.0f },
+		{ -1.0f,  1.5f, -1.0f }, { 0.0f, 0.0f,  0.0f },
 	};
 	static uint16_t cube_indices[] =
 	{
@@ -274,7 +277,7 @@ static void spawn_camera(frogger_game_t* game)
 
 static void update_players(frogger_game_t* game)
 {
-	float dt = (float)timer_object_get_delta_ms(game->timer) * 0.001f;
+	float dt = (float)timer_object_get_delta_ms(game->timer) * 0.1f;
 
 	uint32_t key_mask = wm_get_key_mask(game->window);
 
@@ -321,6 +324,38 @@ static void update_players(frogger_game_t* game)
 			move.translation = vec3f_add(move.translation, vec3f_scale(vec3f_right(), dt));
 		}
 		transform_multiply(&transform_comp->transform, &move);
+	}
+}
+
+static void update_traffic(frogger_game_t* game) {
+	float dt = (float)timer_object_get_delta_ms(game->timer) * 0.1f;
+
+	uint32_t key_mask = wm_get_key_mask(game->window);
+
+	uint64_t k_query_mask = (1ULL << game->transform_type) | (1ULL << game->player_type);
+	uint64_t k_traffic_query_mask = (1ULL << game->transform_type) | (1ULL << game->traffic_type);
+
+	for (ecs_query_t query = ecs_query_create(game->ecs, k_traffic_query_mask);
+		ecs_query_is_valid(game->ecs, &query);
+		ecs_query_next(game->ecs, &query))
+	{
+		// transform_component_t* transform_comp = ecs_query_get_component(game->ecs, &query, game->transform_type);
+		// player_component_t* player_comp = ecs_query_get_component(game->ecs, &query, game->player_type);
+
+		transform_component_t* traffic_transform_comp = ecs_query_get_component(game->ecs, &query, game->transform_type);
+		traffic_component_t* traffic_comp = ecs_query_get_component(game->ecs, &query, game->traffic_type);
+
+		if (traffic_comp->index && traffic_transform_comp->transform.translation.z > 1.0f)
+		{
+			ecs_entity_remove(game->ecs, ecs_query_get_entity(game->ecs, &query), false);
+		}
+
+
+		transform_t move;
+		transform_identity(&move);
+		move.translation = vec3f_add(move.translation, vec3f_scale(vec3f_right(), dt));
+		
+		transform_multiply(&traffic_transform_comp->transform, &move);
 	}
 }
 
