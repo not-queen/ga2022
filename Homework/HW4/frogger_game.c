@@ -216,7 +216,7 @@ static void spawn_player(frogger_game_t* game, int index)
 
 	transform_component_t* transform_comp = ecs_entity_get_component(game->ecs, game->player_ent, game->transform_type, true);
 	transform_identity(&transform_comp->transform);
-	transform_comp->transform.translation.y = 0.0f;
+	transform_comp->transform.translation.y = -15.0f;
 	transform_comp->transform.translation.z = 25.0f;
 
 	name_component_t* name_comp = ecs_entity_get_component(game->ecs, game->player_ent, game->name_type, true);
@@ -363,8 +363,18 @@ static void update_traffic(frogger_game_t* game) {
 		// if the player collides with the traffic then respawn the player
 		if (fabs(transform_comp->transform.translation.y - traffic_transform_comp->transform.translation.y) < 2.0f
 			&& fabs(transform_comp->transform.translation.z - traffic_transform_comp->transform.translation.z) < 2.0f) {
+			transform_comp->transform.translation.y = 0.0f;
 			transform_comp->transform.translation.z = 25.0f;
 		}
+
+		if (traffic_transform_comp->transform.translation.y > 15.0f) {
+			move.translation = vec3f_add(move.translation, vec3f_scale(vec3f_right(), -dt));
+		}
+		else if (traffic_transform_comp->transform.translation.y < -15.0f) {
+			move.translation = vec3f_add(move.translation, vec3f_scale(vec3f_right(), dt));
+		}
+
+
 		
 		transform_multiply(&traffic_transform_comp->transform, &move);
 	}
