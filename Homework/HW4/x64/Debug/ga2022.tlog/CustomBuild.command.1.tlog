@@ -1,4 +1,4 @@
-^C:\USERS\NOT_QUEEN\DESKTOP\GA2022\HOMEWORK\HW4\SHADERS\TRIANGLE.FRAG
-vulkan\glslc.exe C:\Users\not_queen\Desktop\ga2022\Homework\HW4\shaders\triangle.frag -o C:\Users\not_queen\Desktop\ga2022\Homework\HW4\shaders\triangle.frag.spv
-^C:\USERS\NOT_QUEEN\DESKTOP\GA2022\HOMEWORK\HW4\SHADERS\TRIANGLE.VERT
-vulkan\glslc.exe C:\Users\not_queen\Desktop\ga2022\Homework\HW4\shaders\triangle.vert -o C:\Users\not_queen\Desktop\ga2022\Homework\HW4\shaders\triangle.vert.spv
+^C:\USERS\60857\DESKTOP\GA-CLONE\GA2022\HOMEWORK\HW4\SHADERS\TRIANGLE.FRAG
+vulkan\glslc.exe C:\Users\60857\Desktop\ga-clone\ga2022\Homework\HW4\shaders\triangle.frag -o C:\Users\60857\Desktop\ga-clone\ga2022\Homework\HW4\shaders\triangle.frag.spv
+^C:\USERS\60857\DESKTOP\GA-CLONE\GA2022\HOMEWORK\HW4\SHADERS\TRIANGLE.VERT
+vulkan\glslc.exe C:\Users\60857\Desktop\ga-clone\ga2022\Homework\HW4\shaders\triangle.vert -o C:\Users\60857\Desktop\ga-clone\ga2022\Homework\HW4\shaders\triangle.vert.spv
