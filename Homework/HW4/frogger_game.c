@@ -292,11 +292,6 @@ static void update_players(frogger_game_t* game)
 		transform_component_t* transform_comp = ecs_query_get_component(game->ecs, &query, game->transform_type);
 		player_component_t* player_comp = ecs_query_get_component(game->ecs, &query, game->player_type);
 
-		if (player_comp->index && transform_comp->transform.translation.z > 1.0f)
-		{
-			ecs_entity_remove(game->ecs, ecs_query_get_entity(game->ecs, &query), false);
-		}
-
 		// when the player reaches the top of the sceen, set the position of the player to the bottom
 		if (transform_comp->transform.translation.z < -25.0f) {
 			transform_comp->transform.translation.z = 25.0f;
