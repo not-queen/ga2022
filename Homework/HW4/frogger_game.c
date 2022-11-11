@@ -294,12 +294,16 @@ static void update_players(frogger_game_t* game)
 
 		// when the player reaches the top of the sceen, set the position of the player to the bottom
 		if (transform_comp->transform.translation.z < -25.0f) {
-			transform_comp->transform.translation.z = 25.0f;
+			ecs_entity_remove(game->ecs, ecs_query_get_entity(game->ecs, &query), false);
+			spawn_player(game, 0);
+			//transform_comp->transform.translation.z = 25.0f;
 		}
 
 		// when the player reaches the very bottom of the sceen, set the position of the player to the original respawn position
 		if (transform_comp->transform.translation.z > 27.0f) {
-			transform_comp->transform.translation.z = 25.0f;
+			ecs_entity_remove(game->ecs, ecs_query_get_entity(game->ecs, &query), false);
+			spawn_player(game, 0);
+			//transform_comp->transform.translation.z = 25.0f;
 		}
 
 		transform_t move;
@@ -359,8 +363,10 @@ static void update_traffic(frogger_game_t* game) {
 		// if the player collides with the traffic then respawn the player
 		if (fabs(transform_comp->transform.translation.y - traffic_transform_comp->transform.translation.y) < 2.0f
 			&& fabs(transform_comp->transform.translation.z - traffic_transform_comp->transform.translation.z) < 2.0f) {
-			transform_comp->transform.translation.y = 0.0f;
-			transform_comp->transform.translation.z = 25.0f;
+			ecs_entity_remove(game->ecs, ecs_query_get_entity(game->ecs, &player_query), false);
+			spawn_player(game, 0);
+			//transform_comp->transform.translation.y = 0.0f;
+			//transform_comp->transform.translation.z = 25.0f;
 		}
 
 		// if the traffic hits the edge of the screen, the traffic will show on the other side
