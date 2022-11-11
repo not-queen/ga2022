@@ -216,7 +216,7 @@ static void spawn_player(frogger_game_t* game, int index)
 
 	transform_component_t* transform_comp = ecs_entity_get_component(game->ecs, game->player_ent, game->transform_type, true);
 	transform_identity(&transform_comp->transform);
-	transform_comp->transform.translation.y = -15.0f;
+	transform_comp->transform.translation.y = 0.0f;
 	transform_comp->transform.translation.z = 25.0f;
 
 	name_component_t* name_comp = ecs_entity_get_component(game->ecs, game->player_ent, game->name_type, true);
@@ -230,6 +230,7 @@ static void spawn_player(frogger_game_t* game, int index)
 	model_comp->shader_info = &game->cube_shader;
 }
 
+// spawn traffic function
 static void spawn_traffic(frogger_game_t* game, int index)
 {
 	uint64_t k_traffic_ent_mask =
@@ -241,7 +242,7 @@ static void spawn_traffic(frogger_game_t* game, int index)
 
 	transform_component_t* transform_comp = ecs_entity_get_component(game->ecs, game->traffic_ent, game->transform_type, true);
 	transform_identity(&transform_comp->transform);
-	transform_comp->transform.translation.y = 0.0f;;
+	transform_comp->transform.translation.y = (float)index * (-8.0f) + 13.5f;
 	transform_comp->transform.translation.z = (float)index * (- 8.0f) + 10.0f;
 
 	name_component_t* name_comp = ecs_entity_get_component(game->ecs, game->traffic_ent, game->name_type, true);
@@ -329,7 +330,7 @@ static void update_players(frogger_game_t* game)
 }
 
 static void update_traffic(frogger_game_t* game) {
-	float dt = (float)timer_object_get_delta_ms(game->timer) * 0.001f;
+	float dt = (float)timer_object_get_delta_ms(game->timer) * 0.006f;
 
 	uint32_t key_mask = wm_get_key_mask(game->window);
 
@@ -367,11 +368,12 @@ static void update_traffic(frogger_game_t* game) {
 			transform_comp->transform.translation.z = 25.0f;
 		}
 
-		if (traffic_transform_comp->transform.translation.y > 15.0f) {
-			move.translation = vec3f_add(move.translation, vec3f_scale(vec3f_right(), -dt));
+		// if the traffic hits the edge of the screen, the traffic will show on the other side
+		if (traffic_transform_comp->transform.translation.y > 13.5f) {
+			traffic_transform_comp->transform.translation.y = -13.5f;
 		}
-		else if (traffic_transform_comp->transform.translation.y < -15.0f) {
-			move.translation = vec3f_add(move.translation, vec3f_scale(vec3f_right(), dt));
+		else if (traffic_transform_comp->transform.translation.y < -13.5f) {
+			traffic_transform_comp->transform.translation.y = 13.5f;
 		}
 
 
