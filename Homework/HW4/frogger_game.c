@@ -279,7 +279,7 @@ static void spawn_camera(frogger_game_t* game)
 
 static void update_players(frogger_game_t* game)
 {
-	float dt = (float)timer_object_get_delta_ms(game->timer) * 0.1f;
+	float dt = (float)timer_object_get_delta_ms(game->timer) * 0.06f;
 
 	uint32_t key_mask = wm_get_key_mask(game->window);
 
