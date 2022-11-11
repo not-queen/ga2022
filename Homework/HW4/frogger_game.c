@@ -302,7 +302,7 @@ static void update_players(frogger_game_t* game)
 		}
 
 		// when the player reaches the very bottom of the sceen, set the position of the player to the original respawn position
-		if (transform_comp->transform.translation.z > 25.5f) {
+		if (transform_comp->transform.translation.z > 27.0f) {
 			transform_comp->transform.translation.z = 25.0f;
 		}
 
@@ -340,8 +340,9 @@ static void update_traffic(frogger_game_t* game) {
 		ecs_query_is_valid(game->ecs, &query);
 		ecs_query_next(game->ecs, &query))
 	{
-		 transform_component_t* transform_comp = ecs_query_get_component(game->ecs, &query, game->transform_type);
-		 player_component_t* player_comp = ecs_query_get_component(game->ecs, &query, game->player_type);
+		ecs_query_t player_query = ecs_query_create(game->ecs, k_query_mask);
+		transform_component_t* transform_comp = ecs_query_get_component(game->ecs, &player_query, game->transform_type);
+		player_component_t* player_comp = ecs_query_get_component(game->ecs, &player_query, game->player_type);
 
 		transform_component_t* traffic_transform_comp = ecs_query_get_component(game->ecs, &query, game->transform_type);
 		traffic_component_t* traffic_comp = ecs_query_get_component(game->ecs, &query, game->traffic_type);
@@ -358,7 +359,12 @@ static void update_traffic(frogger_game_t* game) {
 			move.translation = vec3f_add(move.translation, vec3f_scale(vec3f_right(), -dt));
 		}
 
-		
+		// check the distance bewteen the player and traffic
+		// if the player collides with the traffic then respawn the player
+		if (fabs(transform_comp->transform.translation.y - traffic_transform_comp->transform.translation.y) < 2.0f
+			&& fabs(transform_comp->transform.translation.z - traffic_transform_comp->transform.translation.z) < 2.0f) {
+			transform_comp->transform.translation.z = 25.0f;
+		}
 		
 		transform_multiply(&traffic_transform_comp->transform, &move);
 	}
