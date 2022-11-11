@@ -123,6 +123,7 @@ void frogger_game_update(frogger_game_t* game)
 	timer_object_update(game->timer);
 	ecs_update(game->ecs);
 	update_players(game);
+	update_traffic(game);
 	draw_models(game);
 	render_push_done(game->render);
 }
@@ -328,7 +329,7 @@ static void update_players(frogger_game_t* game)
 }
 
 static void update_traffic(frogger_game_t* game) {
-	float dt = (float)timer_object_get_delta_ms(game->timer) * 0.1f;
+	float dt = (float)timer_object_get_delta_ms(game->timer) * 0.001f;
 
 	uint32_t key_mask = wm_get_key_mask(game->window);
 
@@ -339,21 +340,25 @@ static void update_traffic(frogger_game_t* game) {
 		ecs_query_is_valid(game->ecs, &query);
 		ecs_query_next(game->ecs, &query))
 	{
-		// transform_component_t* transform_comp = ecs_query_get_component(game->ecs, &query, game->transform_type);
-		// player_component_t* player_comp = ecs_query_get_component(game->ecs, &query, game->player_type);
+		 transform_component_t* transform_comp = ecs_query_get_component(game->ecs, &query, game->transform_type);
+		 player_component_t* player_comp = ecs_query_get_component(game->ecs, &query, game->player_type);
 
 		transform_component_t* traffic_transform_comp = ecs_query_get_component(game->ecs, &query, game->transform_type);
 		traffic_component_t* traffic_comp = ecs_query_get_component(game->ecs, &query, game->traffic_type);
 
-		if (traffic_comp->index && traffic_transform_comp->transform.translation.z > 1.0f)
-		{
-			ecs_entity_remove(game->ecs, ecs_query_get_entity(game->ecs, &query), false);
-		}
-
 
 		transform_t move;
 		transform_identity(&move);
-		move.translation = vec3f_add(move.translation, vec3f_scale(vec3f_right(), dt));
+
+		// make the traffic move in different directions
+		if (traffic_comp->index % 2 == 1) {
+			move.translation = vec3f_add(move.translation, vec3f_scale(vec3f_right(), dt));
+		}
+		else {
+			move.translation = vec3f_add(move.translation, vec3f_scale(vec3f_right(), -dt));
+		}
+
+		
 		
 		transform_multiply(&traffic_transform_comp->transform, &move);
 	}
