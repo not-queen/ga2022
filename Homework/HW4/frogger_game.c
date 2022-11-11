@@ -33,6 +33,11 @@ typedef struct player_component_t
 	int index;
 } player_component_t;
 
+typedef struct traffic_component_t
+{
+	int index;
+} traffic_component_t;
+
 typedef struct name_component_t
 {
 	char name[32];
@@ -53,10 +58,13 @@ typedef struct frogger_game_t
 	int model_type;
 	int player_type;
 	int name_type;
+	int traffic_type;
 	ecs_entity_ref_t player_ent;
+	ecs_entity_ref_t traffic_ent;
 	ecs_entity_ref_t camera_ent;
 
 	gpu_mesh_info_t cube_mesh;
+	gpu_mesh_info_t traffic_mesh;
 	gpu_shader_info_t cube_shader;
 	fs_work_t* vertex_shader_work;
 	fs_work_t* fragment_shader_work;
@@ -68,6 +76,7 @@ static void spawn_player(frogger_game_t* game, int index);
 static void spawn_camera(frogger_game_t* game);
 static void update_players(frogger_game_t* game);
 static void draw_models(frogger_game_t* game);
+static void spawn_traffic(frogger_game_t* game, int index);
 
 frogger_game_t* frogger_game_create(heap_t* heap, fs_t* fs, wm_window_t* window, render_t* render)
 {
@@ -85,10 +94,15 @@ frogger_game_t* frogger_game_create(heap_t* heap, fs_t* fs, wm_window_t* window,
 	game->model_type = ecs_register_component_type(game->ecs, "model", sizeof(model_component_t), _Alignof(model_component_t));
 	game->player_type = ecs_register_component_type(game->ecs, "player", sizeof(player_component_t), _Alignof(player_component_t));
 	game->name_type = ecs_register_component_type(game->ecs, "name", sizeof(name_component_t), _Alignof(name_component_t));
+	game->traffic_type = ecs_register_component_type(game->ecs, "traffic", sizeof(player_component_t), _Alignof(player_component_t));
 
 	load_resources(game);
 	spawn_player(game, 0);
+	spawn_traffic(game, 0);
+	spawn_traffic(game, 1);
+	spawn_traffic(game, 2);
 	spawn_camera(game);
+	
 
 	return game;
 }
@@ -134,6 +148,18 @@ static void load_resources(frogger_game_t* game)
 		{  1.0f,  0.32f, -1.0f }, { 0.0f, 1.0f,  0.0f },
 		{ -1.0f,  0.32f, -1.0f }, { 0.0f, 1.0f,  0.0f },
 	};
+
+	static vec3f_t traffic_verts[] =
+	{
+		{ -1.0f, -5.0f,  1.0f }, { 0.0f, 1.0f,  1.0f },
+		{  1.0f, -5.0f,  1.0f }, { 1.0f, 0.0f,  1.0f },
+		{  1.0f,  5.0f,  1.0f }, { 1.0f, 1.0f,  0.0f },
+		{ -1.0f,  5.0f,  1.0f }, { 1.0f, 0.0f,  0.0f },
+		{ -1.0f, -5.0f, -1.0f }, { 0.0f, 1.0f,  0.0f },
+		{  1.0f, -5.0f, -1.0f }, { 0.0f, 0.0f,  1.0f },
+		{  1.0f,  5.0f, -1.0f }, { 1.0f, 1.0f,  1.0f },
+		{ -1.0f,  5.0f, -1.0f }, { 0.0f, 0.0f,  0.0f },
+	};
 	static uint16_t cube_indices[] =
 	{
 		0, 1, 2,
@@ -149,11 +175,21 @@ static void load_resources(frogger_game_t* game)
 		3, 2, 6,
 		6, 7, 3
 	};
+
 	game->cube_mesh = (gpu_mesh_info_t)
 	{
 		.layout = k_gpu_mesh_layout_tri_p444_c444_i2,
 		.vertex_data = cube_verts,
 		.vertex_data_size = sizeof(cube_verts),
+		.index_data = cube_indices,
+		.index_data_size = sizeof(cube_indices),
+	};
+
+	game->traffic_mesh = (gpu_mesh_info_t)
+	{
+		.layout = k_gpu_mesh_layout_tri_p444_c444_i2,
+		.vertex_data = traffic_verts,
+		.vertex_data_size = sizeof(traffic_verts),
 		.index_data = cube_indices,
 		.index_data_size = sizeof(cube_indices),
 	};
@@ -187,6 +223,31 @@ static void spawn_player(frogger_game_t* game, int index)
 
 	model_component_t* model_comp = ecs_entity_get_component(game->ecs, game->player_ent, game->model_type, true);
 	model_comp->mesh_info = &game->cube_mesh;
+	model_comp->shader_info = &game->cube_shader;
+}
+
+static void spawn_traffic(frogger_game_t* game, int index)
+{
+	uint64_t k_traffic_ent_mask =
+		(1ULL << game->transform_type) |
+		(1ULL << game->model_type) |
+		(1ULL << game->traffic_type) |
+		(1ULL << game->name_type);
+	game->traffic_ent = ecs_entity_add(game->ecs, k_traffic_ent_mask);
+
+	transform_component_t* transform_comp = ecs_entity_get_component(game->ecs, game->traffic_ent, game->transform_type, true);
+	transform_identity(&transform_comp->transform);
+	transform_comp->transform.translation.y = 0.0f;;
+	transform_comp->transform.translation.z = (float)index * (- 8.0f) + 10.0f;
+
+	name_component_t* name_comp = ecs_entity_get_component(game->ecs, game->traffic_ent, game->name_type, true);
+	strcpy_s(name_comp->name, sizeof(name_comp->name), "traffic");
+
+	traffic_component_t* traffic_comp = ecs_entity_get_component(game->ecs, game->traffic_ent, game->traffic_type, true);
+	traffic_comp->index = index;
+
+	model_component_t* model_comp = ecs_entity_get_component(game->ecs, game->traffic_ent, game->model_type, true);
+	model_comp->mesh_info = &game->traffic_mesh;
 	model_comp->shader_info = &game->cube_shader;
 }
 
