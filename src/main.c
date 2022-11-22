@@ -6,6 +6,8 @@
 #include "timer.h"
 #include "wm.h"
 
+#include "cpp_test.h"
+
 int main(int argc, const char* argv[])
 {
 	debug_set_print_mask(k_print_info | k_print_warning | k_print_error);
@@ -13,12 +15,14 @@ int main(int argc, const char* argv[])
 
 	timer_startup();
 
+	cpp_test_function(42);
+
 	heap_t* heap = heap_create(2 * 1024 * 1024);
 	fs_t* fs = fs_create(heap, 8);
 	wm_window_t* window = wm_create(heap);
 	render_t* render = render_create(heap, window);
 
-	simple_game_t* game = simple_game_create(heap, fs, window, render);
+	simple_game_t* game = simple_game_create(heap, fs, window, render, argc, argv);
 
 	while (!wm_pump(window))
 	{
