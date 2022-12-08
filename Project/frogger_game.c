@@ -302,7 +302,7 @@ static void spawn_camera(project_game_t* game)
 
 static void update_players(project_game_t* game)
 {
-	float dt = (float)timer_object_get_delta_ms(game->timer) * 0.06f;
+	float dt = (float)timer_object_get_delta_ms(game->timer) * 0.006f;
 
 	uint32_t key_mask = wm_get_key_mask(game->window);
 	uint32_t mouse_mask = wm_get_mouse_mask(game->window);
@@ -353,12 +353,12 @@ static void update_players(project_game_t* game)
 		}
 
 		if (mouse_mask & k_mouse_button_left) {
-			set_vol(game->audio1, game->audio1->volume - 0.00025f);
+			set_vol(game->audio1, game->audio1->volume - 0.01f);
 			
 		}
 
 		if (mouse_mask & k_mouse_button_right) {
-			set_vol(game->audio1, game->audio1->volume + 0.00025f);
+			set_vol(game->audio1, game->audio1->volume + 0.01f);
 		}
 
 		if(mouse_mask & k_mouse_button_middle) {

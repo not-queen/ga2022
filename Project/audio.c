@@ -124,7 +124,7 @@ int playback(char* file) {
         return -3;
     }
 
-    printf("Press Enter to stop recording...\n");
+    printf("Recording now...\nPress Enter to stop recording...\n");
     getchar();
 
     ma_device_uninit(&device);
