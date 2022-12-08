@@ -1,0 +1,4 @@
+^C:\USERS\60857\DESKTOP\GA-CLONE\GA2022\PROJECT\SHADERS\TRIANGLE.FRAG
+vulkan\glslc.exe C:\Users\60857\Desktop\ga-clone\ga2022\Project\shaders\triangle.frag -o C:\Users\60857\Desktop\ga-clone\ga2022\Project\shaders\triangle.frag.spv
+^C:\USERS\60857\DESKTOP\GA-CLONE\GA2022\PROJECT\SHADERS\TRIANGLE.VERT
+vulkan\glslc.exe C:\Users\60857\Desktop\ga-clone\ga2022\Project\shaders\triangle.vert -o C:\Users\60857\Desktop\ga-clone\ga2022\Project\shaders\triangle.vert.spv
